@@ -1,0 +1,28 @@
+{
+    "settings": [
+        {
+            "name": "oscIP",
+            "value": "192.168.4.2"
+        },
+        {
+            "name": "oscPORT",
+            "value": 9000
+        },
+        {
+            "name": "localPORT",
+            "value": 9000
+        },
+        {
+            "name": "Hitchhiker",
+            "value": "Ford"
+        },
+        {
+            "name": "answer_to_everything",
+            "value": 42
+        },
+        {
+            "name": "variable3",
+            "value": 12.345
+        }
+    ]
+}
