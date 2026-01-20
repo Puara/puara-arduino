@@ -8,31 +8,32 @@ namespace PuaraAPI
 {
 void PuaraFileSystem::mount()
 {
-  ESP_LOGI(PUARA_TAG,"LittleFS: mounting FS");
+  LOG("LittleFS: mounting FS");
   if(!LittleFS.begin(true))
   {
-    ESP_LOGE(PUARA_TAG,"LittleFS: mount failed");
+    LOG("LittleFS: mount failed");
     return;
   }
-  ESP_LOGI(PUARA_TAG,"LittleFS: mount successful");
+  LOG("LittleFS: mount successful");
 }
 
 void PuaraFileSystem::unmount()
 {
-  ESP_LOGI(PUARA_TAG,"LittleFS: unmounting FS");
+  LOG("LittleFS: unmounting FS");
   LittleFS.end();
-  ESP_LOGI(PUARA_TAG,"LittleFS: unmounted");
+  LOG("LittleFS: unmounted");
 }
 
 std::string PuaraFileSystem::read_file(std::string_view path)
 {
   mount();
   auto path_c = std::string(path).c_str();
-  ESP_LOGI(PUARA_TAG,"LittleFS: reading file: ");
-  ESP_LOGI(PUARA_TAG,path_c);
+  LOG("LittleFS: reading file: ");
+  LOG(path_c);
   if(!LittleFS.exists(path_c))
   {
-    ESP_LOGE(PUARA_TAG,"LittleFS: file not found: %s", path_c);
+    LOG("LittleFS: file not found: ");
+    LOG(path_c);
     return "";
   }
 
@@ -41,7 +42,8 @@ std::string PuaraFileSystem::read_file(std::string_view path)
 
   if(!file)
   {
-    ESP_LOGE(PUARA_TAG,"LittleFS: failed to open file: %s", path_c);
+    LOG("LittleFS: failed to open file: ");
+    LOG(path_c);
     return "";
   }
 
@@ -57,19 +59,24 @@ std::string PuaraFileSystem::read_file(std::string_view path)
 
 void PuaraFileSystem::write_file(const std::string& path, const std::string& contents) {
   mount();
-  ESP_LOGI(PUARA_TAG,"littleFS: Writing file %s", path);
+  LOG("littleFS: Writing file ");
+  LOG(path);
 
   File file = LittleFS.open(path.c_str(), FILE_WRITE);
   if (!file) {
-    ESP_LOGE(PUARA_TAG,"LittleFS: failed to open file: %s", path);
+    LOG("LittleFS: failed to open file: ");
+    LOG(path);
     return;
   }
   if (file.print(contents.c_str())) {
-    ESP_LOGI(PUARA_TAG,"LittleFS: wrote %s", path);
+    LOG("LittleFS: wrote ");
+    LOG(path);
+    LOG("closing");
   } else {
-    ESP_LOGE(PUARA_TAG,"LittleFS: failed to write %s", path);
+    LOG("LittleFS: failed to write ");
+    LOG(path);
+    LOG("closing");
   }
-  ESP_LOGI(PUARA_TAG,"closing");
   file.close();
   unmount();
 }

@@ -17,7 +17,7 @@ void PuaraFileSystem::mount()
 {
   if(!esp_spiffs_mounted(spiffs_config.partition_label))
   {
-    ESP_LOGI(PUARA_TAG,"spiffs: Initializing SPIFFS");
+    LOG("spiffs: Initializing SPIFFS");
 
     spiffs_config.base_path = this->spiffs_base_path.c_str();
     spiffs_config.max_files = PuaraAPI::spiffs_max_files;
@@ -32,15 +32,16 @@ void PuaraFileSystem::mount()
     {
       if(ret == ESP_FAIL)
       {
-        ESP_LOGE(PUARA_TAG,"spiffs: Failed to mount or format filesystem");
+        LOG("spiffs: Failed to mount or format filesystem");
       }
       else if(ret == ESP_ERR_NOT_FOUND)
       {
-        ESP_LOGE(PUARA_TAG,"spiffs: Failed to find SPIFFS partition");
+        LOG("spiffs: Failed to find SPIFFS partition");
       }
       else
       {
-        ESP_LOGE(PUARA_TAG,"spiffs: Failed to initialize SPIFFS. Error code: %d", ret);
+        LOG("spiffs: Failed to initialize SPIFFS :");
+        LOG(EspErr{ret});
       }
       return;
     }
@@ -49,18 +50,22 @@ void PuaraFileSystem::mount()
     ret = esp_spiffs_info(spiffs_config.partition_label, &total, &used);
     if(ret != ESP_OK)
     {
-      ESP_LOGE(PUARA_TAG,"spiffs: Failed to get SPIFFS partition information. Error code: %d", ret);
+      LOG("spiffs: Failed to get SPIFFS partition information");
+      LOG(EspErr{ret});
     }
     else
     {
+      
+      LOG("spiffs: Partition size: total: ");
 
-      ESP_LOGD(PUARA_TAG,"spiffs: Partition size: total: %d", total);
-      ESP_LOGD(PUARA_TAG,"used: %d", used);
+      LOG(total);
+      LOG("used: ");
+      LOG(used);
     }
   }
   else
   {
-    ESP_LOGW(PUARA_TAG,"spiffs: SPIFFS already initialized");
+    LOG("spiffs: SPIFFS already initialized");
   }
 }
 
@@ -70,11 +75,11 @@ void PuaraFileSystem::unmount()
   if(esp_spiffs_mounted(spiffs_config.partition_label))
   {
     esp_vfs_spiffs_unregister(spiffs_config.partition_label);
-    ESP_LOGI(PUARA_TAG,"spiffs: SPIFFS unmounted");
+    LOG("spiffs: SPIFFS unmounted");
   }
   else
   {
-    ESP_LOGE(PUARA_TAG,"spiffs: SPIFFS not found");
+    LOG("spiffs: SPIFFS not found");
   }
 }
 
@@ -86,10 +91,12 @@ std::string PuaraFileSystem::read_file(std::string_view path)
   std::ifstream in(full_path);
   if(!in)
   {
-    ESP_LOGE(PUARA_TAG,"spiffs: Failed to open %s", full_path);
+    LOG("spiffs: Failed to open ");
+    LOG(full_path);
     return "";
   }
-  ESP_LOGI(PUARA_TAG,"spiffs: Reading %s", full_path);
+  LOG("spiffs: Reading ");
+  LOG(full_path);
   std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
   unmount();
   return content;
@@ -99,17 +106,20 @@ std::string PuaraFileSystem::read_file(std::string_view path)
 void PuaraFileSystem::write_file(const std::string& path, const std::string& contents)
 {
   mount();
-  ESP_LOGI(PUARA_TAG,"SPIFFS: Opening %s", path);
+  LOG("SPIFFS: Opening ");
+  LOG(path);
   FILE* f = fopen((spiffs_base_path + path).c_str(), "w");
   if(!f)
   {
-    ESP_LOGE(PUARA_TAG,"SPIFFS: Failed to open %s", path);
+    LOG("SPIFFS: Failed to open ");
+    LOG(path);
     return;
   }
 
   fprintf(f, "%s", contents.c_str());
-  ESP_LOGI(PUARA_TAG,"SPIFFS: wrote %s", path);
-  ESP_LOGI(PUARA_TAG,"closing");
+  LOG("SPIFFS: wrote ");
+  LOG(path);
+  LOG("closing");
   fclose(f);
   unmount();
 }

@@ -42,10 +42,8 @@ struct PuaraGlobal
 
   PuaraGlobal() { }
 
-  void start(PuaraAPI::Monitors monitor, esp_log_level_t debug_level)
+  void start(PuaraAPI::Monitors monitor)
   {
-    // Defaults to ESP_LOG_WARNING so that only warnings and errors are printed.
-    esp_log_level_set("puara-module", debug_level);
     std::cout << "\n"
               << "Puara Module Manager                                   \n"
               << "Innovation - Société des Arts Technologiques (SAT)     \n"
@@ -63,12 +61,12 @@ struct PuaraGlobal
     serial.module_monitor = monitor;
 
     // some delay added as start listening blocks the hw monitor
-    ESP_LOGI(PuaraAPI::PUARA_TAG,"Starting serial monitor...");
+    LOG("Starting serial monitor...");
     vTaskDelay(50 / portTICK_RATE_MS);
     if(serial.start_serial_listening()){ // ??
       };
     vTaskDelay(50 / portTICK_RATE_MS);
-    ESP_LOGI(PuaraAPI::PUARA_TAG,"serial listening ready");
+    LOG("serial listening ready");
 
     std::cout << "Puara Start Done!\n\n  Type \"reboot\" in the serial monitor to reset "
                  "the ESP32.\n\n";
@@ -79,9 +77,9 @@ struct PuaraGlobal
 static PuaraGlobal g_puara;
 
 // Defining static members
-void Puara::start(PuaraAPI::Monitors monitor, esp_log_level_t debug_level)
+void Puara::start(PuaraAPI::Monitors monitor)
 {
-  g_puara.start(monitor, debug_level);
+  g_puara.start(monitor);
 }
 
 httpd_handle_t Puara::start_webserver(void)
@@ -104,11 +102,6 @@ unsigned int Puara::version()
 void Puara::set_version(unsigned int user_version)
 {
   g_puara.config.version = user_version;
-}
-
-std::string Puara::staIP()
-{
-  return g_puara.wifi.currentSTA_IP;
 }
 
 void Puara::mount()

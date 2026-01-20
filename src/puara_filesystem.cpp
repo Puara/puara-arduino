@@ -1,7 +1,7 @@
-#include "puara_logger.hpp"
 #include "puara_filesystem.hpp"
 
 #include "puara_config.hpp"
+#include "puara_logger.hpp"
 #include "puara_utils.hpp"
 
 #include <cJSON.h>
@@ -34,7 +34,7 @@ void JSONSettings::read_config_json()
 
 void JSONSettings::read_config_json_internal(std::string& contents)
 {
-  ESP_LOGI(PUARA_TAG,"json: Getting data");
+  LOG("json: Getting data");
   cJSON* root = cJSON_Parse(contents.c_str());
   if(cJSON_GetObjectItem(root, "device"))
   {
@@ -96,12 +96,12 @@ void JSONSettings::read_settings_json()
 void JSONSettings::read_settings_json_internal(std::string& contents, bool merge)
 {
   // Now parse the JSON
-  ESP_LOGI(PUARA_TAG,"json: Getting data");
+  LOG("json: Getting data");
   cJSON* root = cJSON_Parse(contents.c_str());
   cJSON* setting = NULL;
   cJSON* settings = NULL;
 
-  ESP_LOGI(PUARA_TAG,"json: Parse settings information");
+  LOG("json: Parse settings information");
   settings = cJSON_GetObjectItemCaseSensitive(root, "settings");
 
   settingsVariables temp;
@@ -109,7 +109,7 @@ void JSONSettings::read_settings_json_internal(std::string& contents, bool merge
   {
     variables.clear();
   }
-  ESP_LOGI(PUARA_TAG,"json: Extract info");
+  LOG("json: Extract info");
   cJSON_ArrayForEach(setting, settings)
   {
     cJSON* name = cJSON_GetObjectItemCaseSensitive(setting, "name");
@@ -209,12 +209,12 @@ void JSONSettings::write_config_json()
             << std::endl;
 
   // Save to config.json
-  ESP_LOGI(PUARA_TAG,"write_config_json: Serializing json");
+  LOG("write_config_json: Serializing json");
   std::string contents = cJSON_Print(root);
 
-  fs.write_file("/config.json", contents);
+  fs.write_file("config.json", contents);
 
-  ESP_LOGI(PUARA_TAG,"write_config_json: Delete json entity");
+  LOG("write_config_json: Delete json entity");
   cJSON_Delete(root);
 
 }
@@ -245,13 +245,13 @@ void JSONSettings::write_settings_json()
   }
 
   // Save to settings.json
-  ESP_LOGI(PUARA_TAG,"write_settings_json: Serializing json");
+  LOG("write_settings_json: Serializing json");
   std::string contents = cJSON_Print(root);
-  ESP_LOGI(PUARA_TAG,"Filesystem: Saving file");
+  LOG("Filesystem: Saving file");
 
   fs.write_file("/settings.json", contents);
 
-  ESP_LOGI(PUARA_TAG,"write_settings_json: Delete json entity");
+  LOG("write_settings_json: Delete json entity");
   cJSON_Delete(root);
 
   if(this->on_settings_changed)
@@ -268,14 +268,17 @@ void JSONSettings::update_variable_from_string(const std::string& field, const s
   auto it = variables_fields.find(field);
   if(it == variables_fields.end())
   {
-    ESP_LOGW(PUARA_TAG,"Field not found in settings: %s", field);
+    LOG("Field not found in settings: ");
+    LOG(field);
     return;
   }
 
   const int field_index = it->second;
   if(field_index < 0 || field_index >= variables.size())
   {
-    ESP_LOGW(PUARA_TAG,"Field %d not in range %d", field_index, variables.size());
+    LOG("Field not in range: ");
+    LOG(variables.size());
+    LOG(field_index);
     return;
   }
 

@@ -18,7 +18,7 @@ typedef void* httpd_handle_t;
 class Puara
 {
 public:
-  void start(PuaraAPI::Monitors monitor = PuaraAPI::UART_MONITOR, esp_log_level_t debug_level=ESP_LOG_WARN);
+  void start(PuaraAPI::Monitors monitor = PuaraAPI::UART_MONITOR);
 
   httpd_handle_t start_webserver(void);
   void stop_webserver(void);
@@ -45,11 +45,6 @@ public:
   void start_wifi();
   void wifi_scan(void);
   bool get_StaIsConnected();
-
-  /**
-   * returns current IP address on external wifi access point
-   */
-  std::string staIP();
 
   double getVarNumber(std::string varName);
   std::string getVarText(std::string varName);

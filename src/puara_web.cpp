@@ -2,12 +2,8 @@
 
 #include "puara_config.hpp"
 #include "puara_device.hpp"
-
-// make sure to **always** include puara_logger.hpp before puara_filesystem because somewhere deep inside the dependency chain (esp32_hal.h)
-// the local log level #define overrides our define.
-#include "puara_logger.hpp"
 #include "puara_filesystem.hpp"
-
+#include "puara_logger.hpp"
 #include "puara_utils.hpp"
 #include "puara_wifi.hpp"
 
@@ -15,6 +11,7 @@
 #include <iomanip>
 #include <iostream>
 #include <istream>
+
 namespace PuaraAPI
 {
 
@@ -102,12 +99,12 @@ httpd_handle_t Webserver::start_webserver(void)
   this->settingspost.user_ctx = this;
 
   // Start the httpd server
-  ESP_LOGI(PUARA_TAG,"webserver: Starting server on port: %d", webserver_config.server_port);
-  auto error_code = httpd_start(&webserver, &webserver_config);
-  if(error_code == ESP_OK)
+  LOG("webserver: Starting server on port: ");
+  LOG(webserver_config.server_port);
+  if(httpd_start(&webserver, &webserver_config) == ESP_OK)
   {
     // Set URI handlers
-    ESP_LOGI(PUARA_TAG,"webserver: Registering URI handlers");
+    LOG("webserver: Registering URI handlers");
     httpd_register_uri_handler(webserver, &this->index);
     httpd_register_uri_handler(webserver, &this->indexpost);
     httpd_register_uri_handler(webserver, &this->style);
@@ -120,7 +117,7 @@ httpd_handle_t Webserver::start_webserver(void)
     return webserver;
   }
 
-  ESP_LOGE(PUARA_TAG,"webserver: Error starting server! Error code %d", error_code);
+  LOG("webserver: Error starting server!");
   return NULL;
 }
 
@@ -132,7 +129,7 @@ void Webserver::stop_webserver(void)
 
 std::string Webserver::prepare_index()
 {
-  ESP_LOGI(PUARA_TAG,"http : Reading index file");
+  LOG("http : Reading index file");
   std::string contents = fs.read_file("/index.html");
   // Put the module info on the HTML before send response
   find_and_replace("%DMINAME%", config.dmiName, contents);
@@ -178,10 +175,10 @@ esp_err_t Webserver::index_get_handler(httpd_req_t* req)
 
 esp_err_t Webserver::settings_get_handler(httpd_req_t* req)
 {
-  ESP_LOGI(PUARA_TAG,"http : Reading settings file");
+  LOG("http : Reading settings file");
   std::string contents = fs.read_file("/settings.html");
 
-  ESP_LOGI(PUARA_TAG,"settings_get_handler: Adding variables to HTML");
+  LOG("settings_get_handler: Adding variables to HTML");
   std::string settings;
   for(const auto& it : this->settings.variables)
   {
@@ -264,7 +261,7 @@ esp_err_t Webserver::settings_post_handler(httpd_req_t* req)
     // adding delimiter to process last variable in the loop
     str_buf.append(delimiter);
 
-    ESP_LOGD(PUARA_TAG,"Settings stored:");
+    LOG("Settings stored:");
     while((pos = str_buf.find(delimiter)) != std::string::npos)
     {
       str_token = str_buf.substr(0, pos);
@@ -274,20 +271,20 @@ esp_err_t Webserver::settings_post_handler(httpd_req_t* req)
 
       // Decode the field name (key) to handle spaces/special chars
       field = urlDecode(field);
-      ESP_LOGD(PUARA_TAG, "%s", field);
+      LOG(field);
 
       // Change the value in the backend
       settings.update_variable_from_string(field, str_token);
 
-      ESP_LOGD(PUARA_TAG, "%s", str_token);
+      LOG(str_token);
       str_buf.erase(0, pos + delimiter.length());
     }
-    ESP_LOGD(PUARA_TAG,"");
+    LOG("");
     remaining -= api_return;
   }
 
   settings.write_settings_json();
-  ESP_LOGI(PUARA_TAG,"http : Reading saved.html file");
+  LOG("http : Reading saved.html file");
   std::string contents = fs.read_file("/saved.html");
   httpd_resp_sendstr(req, contents.c_str());
 
@@ -298,7 +295,8 @@ esp_err_t Webserver::get_handler(httpd_req_t* req)
 {
   const char* resp_str = (const char*)req->user_ctx;
   std::string requested_path = std::string{resp_str};
-  ESP_LOGI(PUARA_TAG,"http : Reading requested file %s", requested_path);
+  LOG("http : Reading requested file ");
+  LOG(requested_path);
   std::string contents = fs.read_file(requested_path);
   httpd_resp_sendstr(req, contents.c_str());
 
@@ -309,7 +307,7 @@ esp_err_t Webserver::style_get_handler(httpd_req_t* req)
 {
   const char* resp_str = (const char*)req->user_ctx;
   std::string requested_path = std::string{resp_str};
-  ESP_LOGI(PUARA_TAG,"http : Reading style.css file");
+  LOG("http : Reading style.css file");
   std::string contents = fs.read_file(requested_path);
   httpd_resp_set_type(req, "text/css");
   httpd_resp_sendstr(req, contents.c_str());
@@ -321,7 +319,7 @@ esp_err_t Webserver::scan_get_handler(httpd_req_t* req)
 {
   const char* resp_str = (const char*)req->user_ctx;
   std::string requested_path = std::string{resp_str};
-  ESP_LOGI(PUARA_TAG,"http : Reading scan.html file");
+  LOG("http : Reading scan.html file");
   std::ifstream in(resp_str);
   std::string contents = fs.read_file(requested_path);
   wifi.wifi_scan();
@@ -374,68 +372,73 @@ esp_err_t Webserver::index_post_handler(httpd_req_t* req)
         switch(config_fields.at(field))
         {
           case 1:
-            ESP_LOGI(PUARA_TAG,"SSID: %s", str_token);
+            LOG("SSID: ");
+            LOG(str_token);
             if(!str_token.empty())
             {
               config.wifiSSID = urlDecode(str_token);
             }
             else
             {
-              ESP_LOGW(PUARA_TAG,"SSID empty! Keeping the stored value");
+              LOG("SSID empty! Keeping the stored value");
             }
             break;
           case 2:
-            ESP_LOGI(PUARA_TAG,"APpasswd: %s", str_token);
+            LOG("APpasswd: ");
+            LOG(str_token);
             if(!str_token.empty())
             {
               this->APpasswdVal1 = urlDecode(str_token);
             }
             else
             {
-              ESP_LOGW(PUARA_TAG,"APpasswd empty! Keeping the stored value");
+              LOG("APpasswd empty! Keeping the stored value");
               this->APpasswdVal1.clear();
             };
             break;
           case 3:
-            ESP_LOGI(PUARA_TAG,"APpasswdValidate: %s", str_token);
+            LOG("APpasswdValidate: ");
+            LOG(str_token);
             if(!str_token.empty())
             {
               this->APpasswdVal2 = urlDecode(str_token);
             }
             else
             {
-              ESP_LOGW(PUARA_TAG,"APpasswdValidate empty! Keeping the stored value");
+              LOG("APpasswdValidate empty! Keeping the stored value");
               this->APpasswdVal2.clear();
             };
             break;
           case 4:
-            ESP_LOGI(PUARA_TAG,"password: %s", str_token);
+            LOG("password: ");
+            LOG(str_token);
             if(!str_token.empty())
             {
               config.wifiPSK = urlDecode(str_token);
             }
             else
             {
-              ESP_LOGW(PUARA_TAG,"password empty! Keeping the stored value");
+              LOG("password empty! Keeping the stored value");
             }
             break;
           case 5:
-            ESP_LOGI(PUARA_TAG,"Rebooting");
+            LOG("Rebooting");
             ret_flag = true;
             break;
           case 6:
-            ESP_LOGI(PUARA_TAG,"persistentAP: %s", str_token);
-            ESP_LOGI(PUARA_TAG,);
+            LOG("persistentAP: ");
+            LOG(str_token);
             checkbox_persistentAP = true;
             break;
           default:
-            ESP_LOGE(PUARA_TAG,"Error, no match for config field to store received data");
+            LOG("Error, no match for config field to store received data");
             break;
         }
       }
       else
       {
-        ESP_LOGE(PUARA_TAG,"Error, no match for config field to store received data: %s", field);
+        LOG("Error, no match for config field to store received data: ");
+        LOG(field);
       }
       str_buf.erase(0, pos + delimiter.length());
     }
@@ -445,11 +448,11 @@ esp_err_t Webserver::index_post_handler(httpd_req_t* req)
        && APpasswdVal1.length() > 7)
     {
       config.APpasswd = APpasswdVal1;
-      ESP_LOGI(PUARA_TAG,"Puara password changed!");
+      LOG("Puara password changed!");
     }
     else
     {
-      ESP_LOGW(PUARA_TAG,"Puara password doesn't match or shorter than 8 characteres. Passwork not changed.");
+      LOG("Puara password doesn't match or shorter than 8 characteres. Passwork not changed.");
     }
     config.persistentAP = checkbox_persistentAP;
     APpasswdVal1.clear();
@@ -459,16 +462,16 @@ esp_err_t Webserver::index_post_handler(httpd_req_t* req)
 
   if(ret_flag)
   {
-    ESP_LOGI(PUARA_TAG,"http : Reading reboot.html file");
+    LOG("http : Reading reboot.html file");
     std::string contents = fs.read_file("/reboot.html");
     httpd_resp_sendstr(req, contents.c_str());
-    ESP_LOGI(PUARA_TAG,"Rebooting...");
+    LOG("Rebooting...");
     createTask<&Device::reboot_with_delay>(&device, "reboot_with_delay", 1024);
   }
   else
   {
     settings.write_config_json();
-    ESP_LOGI(PUARA_TAG,"http : Reading saved.html file");
+    LOG("http : Reading saved.html file");
     std::string contents = fs.read_file("/saved.html");
     httpd_resp_sendstr(req, contents.c_str());
   }
