@@ -5,29 +5,43 @@
 
 ## Overview
 
-Puara Module Manager facilitates embedded system development by providing a set of pre-defined modules that manage filesystem, webserver, and network connections so the user can focus on easier prototyping the other aspects of their desired system.
+Puara Module Manager facilitates embedded system development by providing a set of pre-defined modules that manage filesystem, web server, and network connections so users can focus on prototyping the rest of their system.
 
 ## How It Works
 
-When initiating the program, the module manager will try to connect to the WiFi Network (SSID) defined in `config.json`. If you want the board to connect to a specific WiFi network, modify the `wifiSSID` and `wifiPSK` values in `config.json` with your network name and password respectively and then build/upload the filesystem. After the board connects to external SSID, it will also create it's own WiFi Access Point **(STA-AP mode)**. If the process cannot connect to a valid SSID, it will still create its own WiFi Access Point **(AP mode)**. to which users may connect and communicate with the board as well as access config/setting webpages.
+When initiating the program, the module manager will try to connect to the WiFi Network (SSID) defined in `config.json`. 
 
-User may modify/add custom values in `settings.json` and access them in their program at any moment by using the **puara.getVarText("name")** and/or **puara.getVarNumber("name")** for text or number fields respectively. Make sure to respect the JSON *name/value* pairing. User may modify said values via the webserver settings page and the defined values will persist even after shutting/rebooting of system. This is very useful if you wish to have easily configurable variables without having to rebuild/reflash your entire system.
+If you want the board to connect to a specific WiFi network, modify the `wifiSSID` and `wifiPSK` values in `config.json` with your network name and password respectively and then build/upload the filesystem. 
 
-To access the webserver, connect to the same SSID as the board is connected to, or connect to the board's WiFi access point, and enter the board's IP address in any Internet browser. If connected to the board's WiFi access point network, you may also type the network name followed by `.local` in the browser's address bar. Default network name is `device`_`id` (see configs.json file) : **Puara_001**. Hence type `puara_001.local` in the browser's address bar to access webserver pages.
+After the board connects to an external SSID, it will also create its own WiFi Access Point **(STA-AP mode)**. 
+
+If the process cannot connect to a valid SSID, it will still create its own WiFi Access Point **(AP mode)** to which users may connect and communicate with the board.
+
+User may modify/add custom values in `settings.json` and access them in their program at any moment by using the **puara.getVarText("name")** and/or **puara.getVarNumber("name")** for text or number fields respectively; make sure to respect the JSON *name/value* pairing. 
+
+User may modify said values via the web server settings page and the defined values will persist even after shutting down/rebooting the system. 
+This is very useful if you wish to have easily configurable variables without having to rebuild/reflash your entire system.
+
+To access the web server, connect to the same network/SSID as the board is connected to, or connect to the board's WiFi access point, and enter the board's IP address in any web browser. 
+
+User may also type the network name followed by `.local` in the browser's address bar. Default network name is `device`_`id` (see `config.json file`) : **Puara_001**. Hence type `puara_001.local` in the browser's address bar to access web server pages.
 
 ## Dependencies
 
-These Arduino examples are developped for Arduino IDE 2.0. You may build and upload code using Arduino utilities. However the filesystem must be uploaded using the following Arduino IDE extension [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload).
+These Arduino examples are developed for Arduino IDE 2.0. You may build and upload code using Arduino utilities however the filesystem must be uploaded using the Arduino IDE extension [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload).
 
 ## Examples
 
-This repository includes five Arduino example sketches that demonstrate different use cases and functionalities. All examples are identical to the PlatformIO templates available in [puara-module-templates](https://github.com/Puara/puara-module-templates).
+This repository includes five Arduino example sketches that demonstrate different use cases and functionalities. 
+All examples are identical to the PlatformIO templates available in [puara-module-templates](https://github.com/Puara/puara-module-templates).
 
-Each example includes a `data/` folder containing configuration files (`config.json`, `settings.json`) and web interface files (HTML and CSS). **After building and uploading the firmware to your board, you must also upload the filesystem** using the [arduino-littlefs-upload](https://github.com/earlephilhower/arduino-littlefs-upload):
+Each example includes a `data/` folder containing configuration files (`config.json`, `settings.json`) and web interface files (HTML and CSS). 
+
+**After building and uploading the firmware to your board, you must also upload the filesystem** using the [arduino-littlefs-upload](https://github.com/earlephilhower/arduino-littlefs-upload):
 
 1. Make sure the arduino-littlefs-upload tool is [installed](https://github.com/earlephilhower/arduino-littlefs-upload?tab=readme-ov-file#installation)
-1. Press **[Ctrl] + [Shift] + [P]** (Windows/Linux) or **[⌘] + [Shift] + [P]** (macOS) to open the Command Palette in the Arduino IDE
-2. Select **"Upload LittleFS to Pico/ESP8266/ESP32"**
+2. Press **[Ctrl] + [Shift] + [P]** (Windows/Linux) or **[⌘] + [Shift] + [P]** (macOS) to open the Command Palette in the Arduino IDE
+3. Select **"Upload LittleFS to Pico/ESP8266/ESP32"**
 
 
 ### 1. Basic Example
@@ -52,7 +66,7 @@ Demonstrates how to set up a basic OSC transmitter. This example:
 - Shows how to use the `onSettingsChanged()` callback to update parameters dynamically
 - Includes example code for reading analog sensors and digital signals
 
-**Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on Github for more details on OSC.
+**Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
 
 ### 3. OSC-Receive Example
 
@@ -66,7 +80,7 @@ Demonstrates how to receive and process OSC messages. This example:
 
 The example expects a float between [0,1] on the OSC address `/led/brightness` with the format: `/led/brightness f 0.34`
 
-**Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on Github for more details on OSC.
+**Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
 
 ### 4. OSC-Duplex Example
 
@@ -78,7 +92,7 @@ Combines both OSC-Send and OSC-Receive functionality in a single sketch. This ex
 - Demonstrates full duplex OSC communication patterns
 - Useful for bidirectional device communication scenarios
 
-**Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on Github for more details on OSC.
+**Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
 
 ### 5. BLE Advertising Example
 
@@ -96,7 +110,7 @@ Demonstrates BLE (Bluetooth Low Energy) advertising without requiring device con
 - **CBOR encoding**: Efficient binary encoding for minimal payload
 - **Device identification**: Each device can be assigned a unique ID via `config.json` for easy tracking
 
-**Use Case**: Ideal for IoT scenarios where you need to monitor many sensor devices simultaneously (e.g., distributed sensor networks, interactive installations).
+**Use Case**: Ideal for IoT scenarios where you need to monitor many sensor devices simultaneously (e.g., distributed sensor networks, interactive installations) and is well-suited for lower data-rate transmission.
 
 #### Getting Started with BLE Advertising
 
@@ -105,8 +119,8 @@ Demonstrates BLE (Bluetooth Low Energy) advertising without requiring device con
 3. **Upload Filesystem**: Upload the data folder using the LittleFS upload tool
 4. **Run BLE-CBOR-to-OSC Script**: 
    - Clone the [BLE-CBOR-to-OSC repository](https://gitlab.com/sat-mtl/collaborations/2024-iot/ble-cbor-to-osc)
-   - Create python virtual environment : `python -m venv venv`
-   - Launch venv : `source ./venv/bin/activate`
+   - Create a Python virtual environment : `python -m venv venv`
+   - Activate the venv : `source ./venv/bin/activate`
    - Install Python dependencies: `pip install -r requirements.txt`
    - Run: `python ble-cbor-to-osc.py`
 5. **Receive OSC Messages**: The script forwards BLE advertising data as OSC messages to `127.0.0.1:9001` (configurable)
