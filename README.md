@@ -28,7 +28,10 @@ User may also type the network name followed by `.local` in the browser's addres
 
 ## Dependencies
 
-These Arduino examples are developed for Arduino IDE 2.0. You may build and upload code using Arduino utilities however the filesystem must be uploaded using the Arduino IDE extension [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload).
+ ⚠️ These Arduino examples are developed for Arduino IDE 2.0. You may build and upload code using Arduino utilities however the filesystem must be uploaded using the Arduino IDE extension [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload).
+ ⚠️ User must absolutely select any options that offer minimal filesystem size before buidling program. These options vary depending on board and can be found here : `/Tools/Partition Scheme/`. A common option is `Minimal SPIFFS` such as  : `/Tools/Partition Scheme/Minimal SPIFFS`.
+
+
 
 ## Examples
 
