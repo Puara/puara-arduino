@@ -1,11 +1,31 @@
-# Puara Module for Arduino
+# Puara Module Examples for Arduino
+
+---
 
 **Société des Arts Technologiques (SAT)**  
-**Input Devices and Music Interaction Laboratory (IDMIL), McGill University**
+**Input Devices and Music Interaction Laboratory (IDMIL)**
+
+---
+
+This repository contains several Arduino templates to be used as a base to create devices that can be controlled over the network.
+
+---
 
 ## Overview
 
-Puara Module Manager facilitates embedded system development by providing a set of pre-defined modules that manage filesystem, web server, and network connections so users can focus on prototyping the rest of their system.
+Puara Module facilitates embedded system development by providing a set of pre-defined modules that manage filesystem, web server, and network connections so users can focus on prototyping the rest of their system.
+
+### Why Use This?
+
+This project is designed for artists and creators interested in:
+- Developing distributed systems
+- Creating interactive installations
+- Building network-based projects
+- Innovating digital instruments
+- Designing new forms of creative interfaces
+
+---
+
 
 ## How It Works
 
@@ -46,6 +66,7 @@ Each example includes a `data/` folder containing configuration files (`config.j
 2. Press **[Ctrl] + [Shift] + [P]** (Windows/Linux) or **[⌘] + [Shift] + [P]** (macOS) to open the Command Palette in the Arduino IDE
 3. Select **"Upload LittleFS to Pico/ESP8266/ESP32"**
 
+--- 
 
 ### 1. Basic Example
 
@@ -59,6 +80,8 @@ A minimal example demonstrating core Puara Module functionality. This example:
 
 This is the best starting point for learning how to use the Puara framework.
 
+---
+
 ### 2. OSC-Send Example
 
 **File**: `examples/OSC-Send/OSC-Send.ino`
@@ -70,6 +93,8 @@ Demonstrates how to set up a basic OSC transmitter. This example:
 - Includes example code for reading analog sensors and digital signals
 
 **Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
+
+---
 
 ### 3. OSC-Receive Example
 
@@ -85,6 +110,8 @@ The example expects a float between [0,1] on the OSC address `/led/brightness` w
 
 **Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
 
+---
+
 ### 4. OSC-Duplex Example
 
 **File**: `examples/OSC-Duplex/OSC-Duplex.ino`
@@ -96,6 +123,8 @@ Combines both OSC-Send and OSC-Receive functionality in a single sketch. This ex
 - Useful for bidirectional device communication scenarios
 
 **Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
+
+---
 
 ### 5. BLE Advertising Example
 
@@ -142,6 +171,8 @@ Use the Arduino IDE 2.0 or VS Code with the PlatformIO extension to work with th
 
 For detailed information about the Puara Module API and source code, refer to the [puara-module documentation](https://github.com/Puara/puara-module).
 
+
+---
 
 ## Licensing
 
