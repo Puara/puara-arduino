@@ -1,72 +1,107 @@
-# Puara Module Examples for Arduino
+# Puara Module for Arduino
 
----
+## Dependencies
 
-**Société des Arts Technologiques (SAT)**  
-**Input Devices and Music Interaction Laboratory (IDMIL)**
+ ⚠️ Download [Arduino 2.0 IDE](https://www.arduino.cc/en/software/) for build/upload of program.
 
----
+ ⚠️ Install [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload) for filesystem uploading.
 
-This repository contains several Arduino templates to be used as a base to create devices that can be controlled over the network.
+ ⚠️ ESP32 board library : Open **Boards Manager** icon in Arduino 2.0 IDE, type **esp32** in the Boars Manager **search bar** and install *esp32* by *Espressif Systems*.
 
----
+ ⚠️ Partition size options : Select any options that offer minimal partition before building program. These options vary depending on board capabilities and can be found here : `/Tools/Partition Scheme/`. A common option is `Minimal SPIFFS` such as  : `/Tools/Partition Scheme/Minimal SPIFFS`. 
+ Warning, some boards simply do not have such options.
 
-## Overview
+## How to Use
 
-Puara Module facilitates embedded system development by providing a set of pre-defined modules that manage filesystem, web server, and network connections so users can focus on prototyping the rest of their system.
+1. **Install Arduino 2.0 IDE**
 
-### Why Use This?
+2. **Dowload the `puara-module` library from library manager**
 
-This project is designed for artists and creators interested in:
-- Developing distributed systems
-- Creating interactive installations
-- Building network-based projects
-- Innovating digital instruments
-- Designing new forms of creative interfaces
+3. **Open a puara template in Arduino IDE**: Open Arduino IDE, go to File/Examples/puara-module/ and select the template of your choice. 
 
----
+4. **Configure the board**: Ensure the `board` and `port` variables in the IDE match your board. 
+
+5. **Edit partition scheme** : Allow more space for your programs. Go to :
+- Tools/Partition Scheme/
+Select `Minimal Spiffs` or similar option. Different boards have different possibilities but generally the `Minimal Spiffs:...` option should be present.
+
+6. **Edit the template**: You are now ready to edit the template according to your board/needs.
+
+7. **Edit the filesystem**: To modify network configurations, add or modify the available variables in the settings, got to :
+- `Sketch/Show Sketch Folder` which will open your local project folder
+- Enter `data/` folder:
+  - Modify network name (SSID) and password (PSK) configurations in config.json;
+  - Modify/Add variables in settings.json;
+  - Save your modifications.
+
+8. **Build and upload the filesystem and firmware**: Once ready, you can:
+- Use Arduino IDE to build and upload the firmware to your board.
+- Use [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload) for the filesystem uploading:
+`[Ctrl]` + `[Shift]` + `[P]`, then "`Upload LittleFS to Pico/ESP8266/ESP32`".
+
+On macOS, press `[⌘]` + `[Shift]` + `[P]` to open the Command Palette in the Arduino IDE, then "`Upload LittleFS to Pico/ESP8266/ESP32`".
+
+9. **Test your IoT device and validate communication between systems**: At this point your board should either connect to your specified network if it can find it. In either case, if it does or doesn't connect, your board will create an Access Point you can connect to directly. Use the board's IP address to communicate with it when needed. More details below.
 
 
 ## How It Works
 
+ ⚠️ **Note:** Every template related to Puara Module has a different set of options but they all generally respect the following explanation.
+
+> ##### **Important detail for users**
+> Most Arduino or embedded projects only upload the **code** that runs on the device. However, in this project, the device also needs a **filesystem** to store important data, such as configuration files, templates, or other resources that the code relies on. These two parts—**code** and **filesystem**—serve different purposes and must be built and uploaded separately.
+> The **executable code** tells the device what to do, includes the logic, instructions, and behavior of the device such as how to read a sensor, process data, or send information over Wi-Fi.
+> The **filesystem** is like a "hard drive" for the device, where additional files are stored and can include configuration files, templates, or other resources that the code needs to function properly. In our approach, the filesystem stores a JSON file with user settings for the network configurations and some global variables that can be modified through the browser without needing to reflash the whole system.
+> 
+
+ The following sections are detailed more thoroughly in the [Puara Module](https://github.com/Puara/puara-module) doumentation.
+
+### Connecting to WiFi
+
 When initiating the program, the module manager will try to connect to the WiFi Network (SSID) defined in `config.json`. 
 
-If you want the board to connect to a specific WiFi network, modify the `wifiSSID` and `wifiPSK` values in `config.json` with your network name and password respectively and then build/upload the filesystem. 
+To connect to a specific WiFi network: 
+- modify the `wifiSSID` and `wifiPSK` values in `config.json` with your network name and password
+- build/upload the filesystem. 
 
-After the board connects to an external SSID, it will also create its own WiFi Access Point **(STA-AP mode)**. 
+After connecting to an external SSID: 
+- The board will create its own WiFi Access Point **(STA-AP mode)**. 
 
-If the process cannot connect to a valid SSID, it will still create its own WiFi Access Point **(AP mode)** to which users may connect and communicate with the board.
+If the board cannot connect to a valid SSID:
+- It will still create its own WiFi Access Point **(AP mode)** for user connection
 
-User may modify/add custom values in `settings.json` and access them in their program at any moment by using the **puara.getVarText("name")** and/or **puara.getVarNumber("name")** for text or number fields respectively; make sure to respect the JSON *name/value* pairing. 
+### Modifying Settings
 
-User may modify said values via the web server settings page and the defined values will persist even after shutting down/rebooting the system. 
-This is very useful if you wish to have easily configurable variables without having to rebuild/reflash your entire system.
+Users can : 
+- Modify/add custom values in `settings.json`
+- Access these values in their program by using:
+  - `puara.getVarText("name")` for text fields.
+  - `puara.getVarNumber("name")` for number fields.
+- Modify values via the web server settings page, with changes persisting after reboot.
 
-To access the web server, connect to the same network/SSID as the board is connected to, or connect to the board's WiFi access point, and enter the board's IP address in any web browser. 
+### Accessing the Web Server
 
-User may also type the network name followed by `.local` in the browser's address bar. Default network name is `device`_`id` (see `config.json file`) : **Puara_001**. Hence type `puara_001.local` in the browser's address bar to access web server pages.
+To access the web server:
+- Connect to the same network/SSID as the board or connect to the board's WiFi access point. 
+- Enter the board's IP address in any web browser. 
+- Alternatively, type the network name followed by `.local` in the browser's address bar. Default network name is `device`_`id` (see `config.json file`) : **Puara_001**. Hence type `puara_001.local` in the browser's address bar to access web server pages.
 
-## Dependencies
+--- 
 
- ⚠️ These Arduino examples are developed for Arduino IDE 2.0. You may build and upload code using Arduino utilities however the filesystem must be uploaded using the Arduino IDE extension [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload).
- ⚠️ User must absolutely select any options that offer minimal filesystem size before buidling program. These options vary depending on board and can be found here : `/Tools/Partition Scheme/`. A common option is `Minimal SPIFFS` such as  : `/Tools/Partition Scheme/Minimal SPIFFS`.
+For more detailed documentation, please refer to the mdBook in the puara-module's github repository.
 
+--- 
 
 
 ## Examples
 
-This repository includes five Arduino example sketches that demonstrate different use cases and functionalities. 
+The [puara-arduino](https://github.com/Puara/puara-arduino) repository includes five Arduino sketches that demonstrate different use cases and functionalities. 
 All examples are identical to the PlatformIO templates available in [puara-module-templates](https://github.com/Puara/puara-module-templates).
 
 Each example includes a `data/` folder containing configuration files (`config.json`, `settings.json`) and web interface files (HTML and CSS). 
 
-**After building and uploading the firmware to your board, you must also upload the filesystem** using the [arduino-littlefs-upload](https://github.com/earlephilhower/arduino-littlefs-upload):
+ ⚠️ **After building and uploading the firmware to your board, you must also upload the filesystem**.
 
-1. Make sure the arduino-littlefs-upload tool is [installed](https://github.com/earlephilhower/arduino-littlefs-upload?tab=readme-ov-file#installation)
-2. Press **[Ctrl] + [Shift] + [P]** (Windows/Linux) or **[⌘] + [Shift] + [P]** (macOS) to open the Command Palette in the Arduino IDE
-3. Select **"Upload LittleFS to Pico/ESP8266/ESP32"**
-
---- 
 
 ### 1. Basic Example
 
@@ -80,8 +115,6 @@ A minimal example demonstrating core Puara Module functionality. This example:
 
 This is the best starting point for learning how to use the Puara framework.
 
----
-
 ### 2. OSC-Send Example
 
 **File**: `examples/OSC-Send/OSC-Send.ino`
@@ -93,8 +126,6 @@ Demonstrates how to set up a basic OSC transmitter. This example:
 - Includes example code for reading analog sensors and digital signals
 
 **Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
-
----
 
 ### 3. OSC-Receive Example
 
@@ -110,8 +141,6 @@ The example expects a float between [0,1] on the OSC address `/led/brightness` w
 
 **Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
 
----
-
 ### 4. OSC-Duplex Example
 
 **File**: `examples/OSC-Duplex/OSC-Duplex.ino`
@@ -123,8 +152,6 @@ Combines both OSC-Send and OSC-Receive functionality in a single sketch. This ex
 - Useful for bidirectional device communication scenarios
 
 **Note**: Please refer to [CNMAT's OSC repository](https://github.com/CNMAT/OSC) on GitHub for more details on OSC.
-
----
 
 ### 5. BLE Advertising Example
 
@@ -165,15 +192,6 @@ You can customize the BLE advertising behavior:
 
 For more information, see the [BLE-CBOR-to-OSC script documentation](https://gitlab.com/sat-mtl/collaborations/2024-iot/ble-cbor-to-osc).
 
-## How to use
-
-Use the Arduino IDE 2.0 or VS Code with the PlatformIO extension to work with these examples. The examples are designed to work on ESP32-based boards.
-
-For detailed information about the Puara Module API and source code, refer to the [puara-module documentation](https://github.com/Puara/puara-module).
 
 
----
 
-## Licensing
-
-The code in this project is licensed under the MIT license, unless otherwise specified within the file.
