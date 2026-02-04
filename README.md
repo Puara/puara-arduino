@@ -1,4 +1,31 @@
-# Puara Module for Arduino
+# Puara Module Examples for Arduino
+
+---
+
+**Société des Arts Technologiques (SAT)**  
+**Input Devices and Music Interaction Laboratory (IDMIL)**
+
+---
+
+This repository contains several Arduino templates to be used as a base to create devices that can be controlled over the network.
+
+---
+
+## Overview
+
+Puara Module facilitates embedded system development by providing a set of pre-defined modules that manage filesystem, web server, and network connections so users can focus on prototyping the rest of their system.
+
+### Why Use This?
+
+This project is designed for artists and creators interested in:
+- Developing distributed systems
+- Creating interactive installations
+- Building network-based projects
+- Innovating digital instruments
+- Designing new forms of creative interfaces
+
+---
+
 
 ## Dependencies
 
@@ -6,10 +33,19 @@
 
  ⚠️ Install [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload) for filesystem uploading.
 
- ⚠️ ESP32 board library : Open **Boards Manager** icon in Arduino 2.0 IDE, type **esp32** in the Boars Manager **search bar** and install *esp32* by *Espressif Systems*.
+ ⚠️ ESP32 board library: 
+ - Open **Boards Manager** icon in Arduino 2.0 IDE
+ - Type **esp32** in the Boards Manager **search bar**
+ - Install *esp32* by *Espressif Systems*.
 
- ⚠️ Partition size options : Select any options that offer minimal partition before building program. These options vary depending on board capabilities and can be found here : `/Tools/Partition Scheme/`. A common option is `Minimal SPIFFS` such as  : `/Tools/Partition Scheme/Minimal SPIFFS`. 
+ ⚠️ Partition size options: 
+ Select any options that offer minimal partition before building program. These options vary depending on board capabilities and can be found here : `/Tools/Partition Scheme/`. 
+ A common option is `Minimal SPIFFS` such as  : `/Tools/Partition Scheme/Minimal SPIFFS`. 
  Warning, some boards simply do not have such options.
+
+ ⚠️ OSC and BLE Arduino Librairies: Some templates will require the installation of CNMAT's `OSC` or Arduino's `BLE` libraries. You can get these directly through the library manager in Arduino 2.0 IDE.
+
+---
 
 ## How to Use
 
@@ -43,6 +79,7 @@ On macOS, press `[⌘]` + `[Shift]` + `[P]` to open the Command Palette in the A
 
 9. **Test your IoT device and validate communication between systems**: At this point your board should either connect to your specified network if it can find it. In either case, if it does or doesn't connect, your board will create an Access Point you can connect to directly. Use the board's IP address to communicate with it when needed. More details below.
 
+--- 
 
 ## How It Works
 
@@ -59,16 +96,21 @@ On macOS, press `[⌘]` + `[Shift]` + `[P]` to open the Command Palette in the A
 ### Connecting to WiFi
 
 When initiating the program, the module manager will try to connect to the WiFi Network (SSID) defined in `config.json`. 
+The `puara-module` supports three modes of operation:
 
-To connect to a specific WiFi network: 
-- modify the `wifiSSID` and `wifiPSK` values in `config.json` with your network name and password
-- build/upload the filesystem. 
+1. **Station - Access Point (STA-AP) Mode**:
+   - The device connects to an existing WiFi network (station). 
+   - The device creates its own WiFi network (access point).
+   - User has two ways to communicate with the board.
+   
+2. **Access Point (AP) Mode**:
+   - The device does not connect to an existing WiFi network. 
+   - The device creates its own WiFi network (access point).
 
-After connecting to an external SSID: 
-- The board will create its own WiFi Access Point **(STA-AP mode)**. 
-
-If the board cannot connect to a valid SSID:
-- It will still create its own WiFi Access Point **(AP mode)** for user connection
+3. **Station (STA) Mode**:
+   - The device connects to an existing WiFi network.
+   - The Access Point is turned off with `persistent_AP=0`
+   - Useful to limit Wifi pollution and securing device.
 
 ### Modifying Settings
 
