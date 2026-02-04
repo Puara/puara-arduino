@@ -1,7 +1,5 @@
 # Puara Module Examples for Arduino
 
----
-
 **Société des Arts Technologiques (SAT)**  
 **Input Devices and Music Interaction Laboratory (IDMIL)**
 
@@ -47,58 +45,63 @@ This project is designed for artists and creators interested in:
 
 ---
 
-## How to Use
+## How to Use Puara Modules
 
 1. **Install Arduino 2.0 IDE**
 
 2. **Dowload the `puara-module` library from library manager**
 
-3. **Open a puara template in Arduino IDE**: Open Arduino IDE, go to File/Examples/puara-module/ and select the template of your choice. 
+3. **Open a puara template in Arduino IDE**: 
+  - Open Arduino IDE, go to File/Examples/puara-module/ and select the template of your choice. 
 
-4. **Configure the board**: Ensure the `board` and `port` variables in the IDE match your board. 
+4. **Configure the board**
+  - Ensure the `board` and `port` variables in the IDE match your board. 
 
-5. **Edit partition scheme** : Allow more space for your programs. Go to :
-- Tools/Partition Scheme/
-Select `Minimal Spiffs` or similar option. Different boards have different possibilities but generally the `Minimal Spiffs:...` option should be present.
+5. **Edit partition scheme**
+  - Allow more space for your programs:
+    - Go to : Tools/Partition Scheme/
+    - Select `Minimal Spiffs` or similar option. Different boards have different possibilities but generally the `Minimal Spiffs:...` option should be present.
 
-6. **Edit the template**: You are now ready to edit the template according to your board/needs.
+6. **Edit the template**
+  - Edit the template according to your board/needs.
 
-7. **Edit the filesystem**: To modify network configurations, add or modify the available variables in the settings, got to :
-- `Sketch/Show Sketch Folder` which will open your local project folder
-- Enter `data/` folder:
-  - Modify network name (SSID) and password (PSK) configurations in config.json;
-  - Modify/Add variables in settings.json;
+7. **Edit the filesystem**
+  - Modify network configurations and add or modify variables in the settings:
+    - Go to `Sketch/Show Sketch Folder` which will open your local project folder
+  - Enter `data/` folder:
+    - Modify network name (SSID) and password (PSK) configurations in config.json;
+    - Modify/Add variables in settings.json;
   - Save your modifications.
 
-8. **Build and upload the filesystem and firmware**: Once ready, you can:
-- Use Arduino IDE to build and upload the firmware to your board.
-- Use [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload) for the filesystem uploading:
-`[Ctrl]` + `[Shift]` + `[P]`, then "`Upload LittleFS to Pico/ESP8266/ESP32`".
+8. **Build and upload the filesystem and firmware**:
+  - Use Arduino IDE to build and upload the firmware to your board.
+  - Use [Arduino-LittleFS-Upload](https://github.com/earlephilhower/arduino-littlefs-upload) for the filesystem uploading:
+    - `[Ctrl]` + `[Shift]` + `[P]`, then "`Upload LittleFS to Pico/ESP8266/ESP32`". 
+    - On macOS, press `[⌘]` + `[Shift]` + `[P]` to open the Command Palette in the Arduino IDE, then "`Upload LittleFS to Pico/ESP8266/ESP32`".
 
-On macOS, press `[⌘]` + `[Shift]` + `[P]` to open the Command Palette in the Arduino IDE, then "`Upload LittleFS to Pico/ESP8266/ESP32`".
+9. **Test your IoT device and validate communication between systems**
+- At this point your board should either connect to your specified network if it can find it. In either case, if it does or doesn't connect, your board will create an Access Point you can connect to directly. Use the board's IP address to communicate with it when needed. More details below.
 
-9. **Test your IoT device and validate communication between systems**: At this point your board should either connect to your specified network if it can find it. In either case, if it does or doesn't connect, your board will create an Access Point you can connect to directly. Use the board's IP address to communicate with it when needed. More details below.
 
---- 
-
-## How It Works
-
- ⚠️ **Note:** Every template related to Puara Module has a different set of options but they all generally respect the following explanation.
-
-> ##### **Important detail for users**
+> #### ⚠️ **Important detail for users**
 > Most Arduino or embedded projects only upload the **code** that runs on the device. However, in this project, the device also needs a **filesystem** to store important data, such as configuration files, templates, or other resources that the code relies on. These two parts—**code** and **filesystem**—serve different purposes and must be built and uploaded separately.
 > The **executable code** tells the device what to do, includes the logic, instructions, and behavior of the device such as how to read a sensor, process data, or send information over Wi-Fi.
 > The **filesystem** is like a "hard drive" for the device, where additional files are stored and can include configuration files, templates, or other resources that the code needs to function properly. In our approach, the filesystem stores a JSON file with user settings for the network configurations and some global variables that can be modified through the browser without needing to reflash the whole system.
 > 
 
- The following sections are detailed more thoroughly in the [Puara Module](https://github.com/Puara/puara-module) doumentation.
+--- 
 
-### Connecting to WiFi
+## How It Works
+
+**Every template related to Puara Module has a different set of options but they all generally respect the following explanation.**
+The following sections are detailed more thoroughly in the [Puara Module](https://github.com/Puara/puara-module) doumentation.
+
+### 1. Establishing WiFi 
 
 When initiating the program, the module manager will try to connect to the WiFi Network (SSID) defined in `config.json`. 
 The `puara-module` supports three modes of operation:
 
-1. **Station - Access Point (STA-AP) Mode**:
+1. **Station - Access Point (STA-AP) Mode** (Default):
    - The device connects to an existing WiFi network (station). 
    - The device creates its own WiFi network (access point).
    - User has two ways to communicate with the board.
@@ -112,21 +115,47 @@ The `puara-module` supports three modes of operation:
    - The Access Point is turned off with `persistent_AP=0`
    - Useful to limit Wifi pollution and securing device.
 
-### Modifying Settings
 
-Users can : 
-- Modify/add custom values in `settings.json`
-- Access these values in their program by using:
-  - `puara.getVarText("name")` for text fields.
-  - `puara.getVarNumber("name")` for number fields.
-- Modify values via the web server settings page, with changes persisting after reboot.
+### 2. Making the Web Server Accessible
 
-### Accessing the Web Server
+Browser-accessible pages available for configuring, scanning, and managing settings on your device are made availabe through Puara Module.
 
-To access the web server:
-- Connect to the same network/SSID as the board or connect to the board's WiFi access point. 
-- Enter the board's IP address in any web browser. 
-- Alternatively, type the network name followed by `.local` in the browser's address bar. Default network name is `device`_`id` (see `config.json file`) : **Puara_001**. Hence type `puara_001.local` in the browser's address bar to access web server pages.
+Once the web server is running, you can access it in two ways:
+
+1. **Via IP Address**: Navigate to the device's IP address in your web browser (e.g., `http://192.168.4.1` for AP mode, or the assigned IP in STA/STA-AP modes which can be retrieved using `puara.staIP()`).
+
+2. **Via mDNS Hostname**: If mDNS is enabled, you can access the device using its hostname (e.g., `http://your-device-name.local`). Default `config.json`values enable mDNS with the Puara_001, and browser is accessible with `puara_001.local`. 
+
+Using the web browser, users can modify variables that keep their value after reboot/shutdown of device without needing to rebuild/upload their program.
+Access these values in the program by using:
+
+```cpp
+// For text fields
+std::string my_string = puara.getVarText("variable_name");
+
+// For number fields (all numbers are `doubles` -- see JSON documentation for explanation)
+double my_number = puara.getVarNumber("variable_name");
+```
+
+#### Making of Custom Variables in `settings.json`
+
+The `/data/settings.json` file stores custom application settings as an array of name-value pairs:
+
+```json
+{
+    "settings": [
+        {
+            "name": "user_defined_text",
+            "value": "user defined value"
+        },
+        {
+            "name": "variable3",
+            "value": 12.345
+        }
+    ]
+}
+```
+User may add/modify fields in this file and then upload the new filesystem in order to have a more custom device.
 
 --- 
 
